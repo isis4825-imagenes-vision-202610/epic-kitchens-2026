@@ -26,15 +26,16 @@ def compute_map(
 
     for k in topk:
         ap_sum = 0.0
+        actual_k = min(k, sim_matrix.shape[1])
         for i in range(n_queries):
-            top_indices = sorted_indices[i, :k]
+            top_indices = sorted_indices[i, :actual_k]
             rel = relevancy_matrix[i, top_indices]
             if rel.sum() == 0:
                 continue
             cumsum = np.cumsum(rel > 0)
-            precision_at_rank = cumsum / np.arange(1, k + 1)
+            precision_at_rank = cumsum / np.arange(1, actual_k + 1)
             ap_sum += (precision_at_rank * (rel > 0)).sum() / min(
-                k, (relevancy_matrix[i] > 0).sum()
+                actual_k, (relevancy_matrix[i] > 0).sum()
             )
         results[f"mAP@{k}"] = float(ap_sum / n_queries)
 
