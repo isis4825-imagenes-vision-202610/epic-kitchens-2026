@@ -1,0 +1,3 @@
+_target_: ekmr.models.sms_loss_model.SMSLossModel
+embed_dim: 768
+num_frames: 16

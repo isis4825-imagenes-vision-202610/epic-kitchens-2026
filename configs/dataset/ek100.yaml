@@ -1,0 +1,7 @@
+root: data/raw/EK100
+split: train
+num_frames: 16
+clip_length: 2.0
+num_workers: 8
+pin_memory: true
+batch_size: 40

@@ -1,0 +1,3 @@
+_target_: ekmr.models.custom.CustomRetriever
+embed_dim: 768
+num_frames: 16

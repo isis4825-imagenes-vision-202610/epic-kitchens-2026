@@ -1,0 +1,4 @@
+warmup_epochs: 1
+total_epochs: 10
+warmup_start_lr: 1.0e-7
+min_lr: 1.0e-7
