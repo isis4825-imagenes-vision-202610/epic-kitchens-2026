@@ -1,0 +1,7 @@
+_target_: ekmr.models.cr_clip.CRClip
+backbone: vit_l14
+embed_dim: 768
+refinement_dim: 512
+num_heads: 8
+num_frames: 16
+dropout: 0.1

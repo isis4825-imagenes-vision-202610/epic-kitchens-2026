@@ -1,0 +1,18 @@
+# @package _global_
+defaults:
+  - override /model: cr_clip
+  - override /optimizer: adamw
+  - override /scheduler: warmup_cosine
+
+training:
+  epochs: 10
+  grad_clip: 1.0
+  amp: true
+
+loss:
+  _target_: ekmr.losses.sms_loss.SMSLoss
+  tau: 0.05
+
+tta:
+  horizontal_flip: true
+  multi_scale: [224, 256, 288]

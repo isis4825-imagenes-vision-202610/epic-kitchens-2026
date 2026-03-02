@@ -1,0 +1,9 @@
+# @package _global_
+defaults:
+  - override /model: cr_clip
+
+hydra:
+  sweeper:
+    params:
+      optimizer.lr: 1e-5,1.8e-5,3e-5
+      loss.tau: 0.01,0.05,0.1

@@ -1,0 +1,7 @@
+# @package _global_
+defaults:
+  - override /model: cr_clip
+
+tta:
+  horizontal_flip: false
+  multi_scale: [224]

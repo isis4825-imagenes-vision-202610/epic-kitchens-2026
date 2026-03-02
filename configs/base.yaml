@@ -1,0 +1,55 @@
+project: epic-kitchens-mir
+seed: 42
+output_dir: experiments/${now:%Y-%m-%d_%H-%M-%S}
+
+defaults:
+  - model: cr_clip
+  - dataset: ek100
+  - optimizer: adamw
+  - scheduler: warmup_cosine
+
+model:
+  _target_: ekmr.models.cr_clip.CRClip
+  backbone: vit_l14
+  embed_dim: 768
+  refinement_dim: 512
+  num_heads: 8
+  dropout: 0.1
+
+dataset:
+  root: data/raw/EK100
+  num_frames: 16
+  clip_length: 2.0
+  num_workers: 8
+  pin_memory: true
+  batch_size: 40
+
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 1.8e-5
+  weight_decay: 0.01
+  betas: [0.9, 0.98]
+
+scheduler:
+  warmup_epochs: 1
+  total_epochs: 10
+
+loss:
+  _target_: ekmr.losses.sms_loss.SMSLoss
+  tau: 0.05
+
+training:
+  epochs: 10
+  grad_clip: 1.0
+  amp: true
+  ddp: true
+
+logging:
+  wandb: true
+  wandb_project: epic-kitchens-mir
+  log_every_n_steps: 50
+  save_every_n_epochs: 1
+
+tta:
+  horizontal_flip: true
+  multi_scale: [224, 256, 288]
