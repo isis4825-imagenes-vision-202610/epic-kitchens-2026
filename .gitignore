@@ -49,3 +49,6 @@ notebooks/*.png
 
 # Submissions
 submissions/
+
+# Hydra outputs
+outputs/
