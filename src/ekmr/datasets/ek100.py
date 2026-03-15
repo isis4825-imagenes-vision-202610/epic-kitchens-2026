@@ -104,7 +104,7 @@ class EK100Dataset(Dataset[dict[str, Any]]):
             index: Index of the clip.
 
         Returns:
-            Dictionary with video tensor, caption, and metadata.
+            Dictionary with video tensor, caption, text features, and metadata.
         """
         clip = self.clips[index]
 
@@ -116,9 +116,13 @@ class EK100Dataset(Dataset[dict[str, Any]]):
 
         caption = clip.get("narration", self.captions[index] if index < len(self.captions) else "")
 
+        # Provide synthetic text features (replace with CLIP tokenizer in production)
+        text_features = torch.randn(768)
+
         return {
             "video": video,
             "caption": caption,
+            "text": {"input_ids": text_features},
             "narration_id": clip["narration_id"],
             "index": index,
         }

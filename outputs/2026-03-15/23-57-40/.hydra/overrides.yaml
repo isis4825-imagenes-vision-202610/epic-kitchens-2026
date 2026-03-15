@@ -1,0 +1,7 @@
+- training.epochs=1
+- training.ddp=false
+- logging.wandb=false
+- dataset.batch_size=4
+- dataset.num_workers=0
+- dataset.pin_memory=false
+- output_dir=experiments/final_smoke

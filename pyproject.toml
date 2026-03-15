@@ -10,7 +10,7 @@ dependencies = [
     "transformers",
     "timm",
     "einops",
-    "decord",
+    "eva-decord",
     "pandas",
     "numpy",
     "scipy",
@@ -28,6 +28,11 @@ dependencies = [
     "av",
     "ffmpeg-python",
     "nltk",
+    "requests",
+    "tqdm",
+    "jupyter",
+    "ipykernel",
+    "ipywidgets",
 ]
 
 [dependency-groups]
@@ -41,6 +46,9 @@ dev = [
     "pre-commit",
     "ipython",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ekmr"]
 
 [tool.ruff]
 line-length = 100
@@ -64,4 +72,4 @@ testpaths = ["tests"]
 
 [build-system]
 requires = ["hatchling"]
-build-backend = "hatchling.backends"
+build-backend = "hatchling.build"

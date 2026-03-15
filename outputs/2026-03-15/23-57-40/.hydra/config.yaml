@@ -1,0 +1,50 @@
+model:
+  _target_: ekmr.models.cr_clip.CRClip
+  backbone: vit_l14
+  embed_dim: 768
+  refinement_dim: 512
+  num_heads: 8
+  num_frames: 16
+  dropout: 0.1
+dataset:
+  root: data/raw/EK100
+  split: train
+  num_frames: 16
+  clip_length: 2.0
+  num_workers: 0
+  pin_memory: false
+  batch_size: 4
+optimizer:
+  _target_: torch.optim.AdamW
+  lr: 1.8e-05
+  weight_decay: 0.01
+  betas:
+  - 0.9
+  - 0.98
+scheduler:
+  warmup_epochs: 1
+  total_epochs: 10
+  warmup_start_lr: 1.0e-07
+  min_lr: 1.0e-07
+project: epic-kitchens-mir
+seed: 42
+output_dir: experiments/final_smoke
+loss:
+  _target_: ekmr.losses.sms_loss.SMSLoss
+  tau: 0.05
+training:
+  epochs: 1
+  grad_clip: 1.0
+  amp: true
+  ddp: false
+logging:
+  wandb: false
+  wandb_project: epic-kitchens-mir
+  log_every_n_steps: 50
+  save_every_n_epochs: 1
+tta:
+  horizontal_flip: true
+  multi_scale:
+  - 224
+  - 256
+  - 288
