@@ -41,3 +41,14 @@ node_modules/
 .vscode/
 *.swp
 *.swo
+
+# Jupyter
+notebooks/01_data_exploration_executed.ipynb
+notebooks/*.png
+.ipynb_checkpoints/
+
+# Submissions
+submissions/
+
+# Hydra outputs
+outputs/

@@ -30,14 +30,11 @@ Given N video clips and M text captions, retrieve the best matching caption for 
 git clone https://github.com/isis4825-imagenes-vision-202610/epic-kitchens-2026.git
 cd epic-kitchens-2026
 
-# Install with UV
+# Install with UV (recommended)
 uv sync
 
-# Or install with pip
-pip install -e .
-
 # Install dev dependencies
-pip install -e ".[dev]"
+uv sync --group dev
 ```
 
 ### Core Dependencies
@@ -55,17 +52,31 @@ pip install -e ".[dev]"
 python data/download/download_annotations.py
 ```
 
-### Step 2: Download Videos (~740GB full, subset available)
+### Step 2: Download Videos and RGB frames (~740GB full, subset available)
 
 ```bash
-# Full dataset
+# Full dataset (all participants, ~740 GB)
 python data/download/download_ek100.py
 
-# Subset (specific participants)
+# Subset (specific participants, much smaller)
 python data/download/download_ek100.py --participants P01 P02 P03
+
+# Only RGB frames (skip original videos)
+python data/download/download_ek100.py --rgb-frames-only
 ```
 
-### Step 3: Verify Dataset
+> **Note**: The downloader script automatically clones the official
+> [epic-kitchens-download-scripts](https://github.com/epic-kitchens/epic-kitchens-download-scripts)
+> repository and calls it on your behalf.  Partial downloads are safe to
+> resume by re-running the same command.
+
+### Step 3: Download Pretrained Weights
+
+```bash
+python data/download/download_pretrained.py
+```
+
+### Step 4: Verify Dataset
 
 ```bash
 python data/verify.py --root data/raw/EK100

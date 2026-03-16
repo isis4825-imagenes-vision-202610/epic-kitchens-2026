@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, Any
 
 import torch
 import torch.nn as nn
-from torch.cuda.amp import GradScaler
 
 if TYPE_CHECKING:
     from torch.utils.data import DataLoader
@@ -57,7 +56,9 @@ class Trainer:
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.scaler = GradScaler(enabled=self.config.get("amp", True))
+        amp_device = "cuda" if torch.cuda.is_available() else "cpu"
+        self._amp_device = amp_device
+        self.scaler = torch.amp.GradScaler(amp_device, enabled=self.config.get("amp", True) and torch.cuda.is_available())
         self.grad_clip = self.config.get("grad_clip", 1.0)
         self.global_step = 0
 
@@ -109,7 +110,7 @@ class Trainer:
         if relevancy is not None:
             relevancy = relevancy.to(self.device, non_blocking=True)
 
-        with torch.cuda.amp.autocast(enabled=self.config.get("amp", True)):
+        with torch.amp.autocast(self._amp_device, enabled=self.config.get("amp", True) and torch.cuda.is_available()):
             video_embeds, text_embeds = self.model(video, text)
             if relevancy is not None:
                 loss = self.loss_fn(video_embeds, text_embeds, relevancy)
