@@ -26,7 +26,7 @@ from ekmr.utils.seed import seed_everything
 
 def evaluate_checkpoint(
     checkpoint_path: str,
-    split: str = "val",
+    split: str = "test",
     use_tta: bool = False,
     data_root: str = "data/raw/EK100",
     output_dir: str = "experiments/eval",
@@ -101,7 +101,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Evaluate retrieval model")
     parser.add_argument("--checkpoint", type=str, required=True)
-    parser.add_argument("--split", type=str, default="val")
+    parser.add_argument("--split", type=str, default="test")
     parser.add_argument("--tta", action="store_true")
     parser.add_argument("--data-root", type=str, default="data/raw/EK100")
     parser.add_argument("--output-dir", type=str, default="experiments/eval")

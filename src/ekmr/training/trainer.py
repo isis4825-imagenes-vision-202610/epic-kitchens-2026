@@ -61,6 +61,10 @@ class Trainer:
         self.scaler = torch.amp.GradScaler(amp_device, enabled=self.config.get("amp", True) and torch.cuda.is_available())
         self.grad_clip = self.config.get("grad_clip", 1.0)
         self.global_step = 0
+        # max_steps: if set to a positive integer, training stops after that many
+        # batches per epoch (useful for fast smoke tests).
+        max_steps_cfg = self.config.get("training", {}).get("max_steps", None)
+        self.max_steps: int | None = int(max_steps_cfg) if max_steps_cfg is not None else None
 
     def train_epoch(self, epoch: int) -> dict[str, float]:
         """Train for one epoch.
@@ -75,7 +79,9 @@ class Trainer:
         total_loss = 0.0
         num_batches = 0
 
-        for batch in self.train_loader:
+        for step, batch in enumerate(self.train_loader):
+            if self.max_steps is not None and step >= self.max_steps:
+                break
             step_metrics = self._train_step(batch)
             total_loss += step_metrics["loss"]
             num_batches += 1

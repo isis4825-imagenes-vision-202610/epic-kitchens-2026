@@ -57,13 +57,17 @@ def _download_file(url: str, dest: Path) -> None:
         raise
 
 
-def download_pretrained(output_dir: str = DEFAULT_OUTPUT_DIR) -> None:
+def download_pretrained(output_dir: str = DEFAULT_OUTPUT_DIR, skip_missing: bool = True) -> None:
     """Download all available pretrained weights.
 
     Files that already exist (non-empty) are skipped.
 
     Args:
         output_dir: Directory to save the downloaded weights.
+        skip_missing: If True (default), log a warning and continue when a
+            download fails instead of raising an error.  The pipeline can
+            still run with random weights when pretrained checkpoints are
+            unavailable.
     """
     out_path = Path(output_dir)
     out_path.mkdir(parents=True, exist_ok=True)
@@ -89,7 +93,9 @@ def download_pretrained(output_dir: str = DEFAULT_OUTPUT_DIR) -> None:
             "\nSome weights could not be downloaded automatically."
             "\nSee messages above for manual download instructions."
         )
-        sys.exit(1)
+        if not skip_missing:
+            sys.exit(1)
+        print("  Continuing without pretrained weights (skip_missing=True).")
     else:
         print(f"\nAll pretrained weights are ready in {out_path.resolve()}")
 
@@ -102,5 +108,17 @@ if __name__ == "__main__":
         default=DEFAULT_OUTPUT_DIR,
         help="Directory to save pretrained weights (default: checkpoints/pretrained)",
     )
+    parser.add_argument(
+        "--skip-missing",
+        action="store_true",
+        default=True,
+        help="Continue without error when a download fails (default: True)",
+    )
+    parser.add_argument(
+        "--no-skip-missing",
+        dest="skip_missing",
+        action="store_false",
+        help="Exit with error code 1 when any download fails",
+    )
     args = parser.parse_args()
-    download_pretrained(args.output_dir)
+    download_pretrained(args.output_dir, skip_missing=args.skip_missing)
