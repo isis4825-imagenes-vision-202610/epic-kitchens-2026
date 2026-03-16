@@ -76,8 +76,8 @@ def _run_downloader(
 
     cmd: list[str] = [sys.executable, str(downloader)]
 
-    # Output directory
-    cmd += ["--output-path", str(output_dir)]
+    # Output directory — pass absolute path so the downloader works regardless of CWD
+    cmd += ["--output-path", str(output_dir.resolve())]
 
     # Content flags
     if videos:
@@ -90,16 +90,18 @@ def _run_downloader(
     # Always include action-retrieval annotations subset
     cmd.append("--action-retrieval")
 
-    # Participant filter
+    # Participant filter — the official downloader expects a single comma-separated string
     if participants:
-        cmd += ["--participants"] + participants
+        cmd += ["--participants", ",".join(participants)]
 
     print("Running official downloader:")
     print("  " + " ".join(cmd))
     print()
 
     try:
-        subprocess.run(cmd, check=True)
+        # Run from the downloader repo directory so relative paths inside the
+        # script (e.g. data/epic_55_splits.csv) resolve correctly.
+        subprocess.run(cmd, check=True, cwd=str(repo_dir))
     except subprocess.CalledProcessError as exc:
         print(f"\nDownload failed (exit code {exc.returncode}).")
         print("Partial downloads may be resumed by re-running this script.")

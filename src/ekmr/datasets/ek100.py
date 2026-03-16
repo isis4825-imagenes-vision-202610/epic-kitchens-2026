@@ -24,6 +24,8 @@ class EK100Dataset(Dataset[dict[str, Any]]):
         transform: Optional video transform function.
     """
 
+    VALID_SPLITS = {"train", "test"}
+
     def __init__(
         self,
         root: str | Path,
@@ -31,6 +33,10 @@ class EK100Dataset(Dataset[dict[str, Any]]):
         num_frames: int = 16,
         transform: Any | None = None,  # noqa: ANN401
     ) -> None:
+        if split not in self.VALID_SPLITS:
+            raise ValueError(
+                f"Invalid split '{split}'. Choose from {self.VALID_SPLITS}"
+            )
         self.root = Path(root)
         self.split = split
         self.num_frames = num_frames
@@ -43,8 +49,17 @@ class EK100Dataset(Dataset[dict[str, Any]]):
         self._load_annotations()
 
     def _load_annotations(self) -> None:
-        """Load annotations and relevancy matrix from disk."""
+        """Load annotations and relevancy matrix from disk.
+
+        The official downloader places files under an ``EPIC-KITCHENS/``
+        subdirectory inside the chosen output path.  This method searches
+        both the flat layout and the nested layout so it works regardless
+        of how the data was obtained.
+        """
+        # Resolve the annotations directory — check both possible layouts.
         ann_dir = self.root / "epic-kitchens-100-annotations"
+        if not ann_dir.exists():
+            ann_dir = self.root / "EPIC-KITCHENS" / "epic-kitchens-100-annotations"
 
         # Try to load CSV annotations
         csv_path = ann_dir / f"EPIC_100_retrieval_{self.split}.csv"
